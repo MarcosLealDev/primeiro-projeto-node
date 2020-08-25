@@ -1,9 +1,5 @@
 import express from 'express';
 
-// eslint-disable-next-line import/no-unresolved
-// eslint-disable-next-line import/extensions
-// eslint-disable-next-line import/no-unresolved
-// eslint-disable-next-line import/extensions
 import routes from './routes';
 
 const app = express();
