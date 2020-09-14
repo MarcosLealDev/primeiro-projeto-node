@@ -3,6 +3,14 @@ import { verify } from 'jsonwebtoken';
 
 import authConfig from '../config/auth';
 
+import AppError from '../errors/AppError';
+
+interface TokenPayLoad {
+  iat: number;
+  exp: number;
+  sub: string;
+}
+
 export default function ensureAuthenticated(
   request: Request,
   response: Response,
@@ -12,17 +20,19 @@ export default function ensureAuthenticated(
   const authHeader = request.headers.authorization;
 
   if (!authHeader) {
-    throw new Error('JWT token is missing');
+    throw new AppError('JWT token is missing', 401);
   }
 
-  // Bearer
-
-  const [, token] = authHeader.split('');
+  const [, token] = authHeader.split(' ');
 
   try {
     const decoded = verify(token, authConfig.jwt.secret);
 
-    console.log(decoded);
+    const { sub } = decoded as TokenPayLoad;
+
+    request.user = {
+      id: sub,
+    };
 
     return next();
   } catch {
